@@ -3,7 +3,8 @@ using System.Collections;
 
 public class Gemstone : MonoBehaviour {
 	public GameObject[] GemstoneTypeArray;//gemstonesbgs
-	public int GemstoneType;
+	public int GemstoneType;//宝石种类
+    public int UsedGemstoneTypeNum;//使用的宝石种类（小于总种类）
 	private GameObject GemstoneBg;//gemstonebg
 
 	public float x_offset;
@@ -105,7 +106,10 @@ public class Gemstone : MonoBehaviour {
 		if (GemstoneBg != null)
 			return;
 
-		GemstoneType = Random .Range (0, GemstoneTypeArray.Length);
+        if (0 >= UsedGemstoneTypeNum || UsedGemstoneTypeNum >= GemstoneTypeArray.Length)
+            UsedGemstoneTypeNum = GemstoneTypeArray.Length;
+
+        GemstoneType = Random .Range (0, UsedGemstoneTypeNum);
 
 		GemstoneBg = Instantiate(GemstoneTypeArray[GemstoneType]) as GameObject ;
 

@@ -315,28 +315,7 @@ public class GameController : MonoBehaviour {
 					AddMatchedGemstoneToList(GetGemstone(row,col+1));
 					AddMatchedGemstoneToList(GetGemstone(row,col+2));
 
-                    /* check upside
-                     * -----[r-2]-----
-                     * -----[r-1]-----
-                     * -----[r  ]-----
-                     */
-                    if(current_gemtype == GetGemstoneType(row-1,col)
-                       && current_gemtype == GetGemstoneType(row-2,col))
-                    {
-                        AddMatchedGemstoneToList(GetGemstone(row-1,col));
-                        AddMatchedGemstoneToList(GetGemstone(row-2,col));
-                    }
-                    /* check downside
-                     * -----[r  ]-----
-                     * -----[r+1]-----
-                     * -----[r+2]-----
-                     */
-                    if(current_gemtype == GetGemstoneType(row+1,col)
-                       && current_gemtype == GetGemstoneType(row+2,col))
-                    {
-                        AddMatchedGemstoneToList(GetGemstone(row+1,col));
-                        AddMatchedGemstoneToList(GetGemstone(row+2,col));
-                    }
+                    CheckAndAddVerticalMatchedGemstone(row,col,current_gemtype);
 				}
 			}
 		}
@@ -345,18 +324,23 @@ public class GameController : MonoBehaviour {
 
 	bool CheckCol(){
 		bool matched = false;
+        int current_gemtype = -1;
 		for(int col = 0; col < ColNumber; col ++)
 		{
 			for( int row = 0; row < RowNumber -2; row++)
 			{
-				if((GetGemstone(row,col).GemstoneType == GetGemstone(row+1,col).GemstoneType)
-				   && (GetGemstone(row,col).GemstoneType == GetGemstone(row+2,col).GemstoneType))
+                current_gemtype = GetGemstoneType(row,col);
+
+                if((current_gemtype == GetGemstone(row+1,col).GemstoneType)
+                   && (current_gemtype == GetGemstone(row+2,col).GemstoneType))
 				{
 					Debug.Log("Finded same gemstong in col");
 					matched = true;
 					AddMatchedGemstoneToList(GetGemstone(row,col));
 					AddMatchedGemstoneToList(GetGemstone(row+1,col));
 					AddMatchedGemstoneToList(GetGemstone(row+2,col));
+
+                    CheckAndAddHorizontalMatchedGemstone(row,col,current_gemtype);
 				}
 			}
 		}
@@ -396,6 +380,77 @@ public class GameController : MonoBehaviour {
             return -1;
         else
             return GetGemstone(row, col).GemstoneType;
+    }
+
+    /// <summary>
+    /// Checks the and add upside and downside matched gemstone.
+    /// 2    2    2   1      1      1
+    /// o    o    o   
+    /// o    o    o   o      o      o
+    /// ooo ooo ooo   ooo   ooo   ooo
+    /// o    o    o   o      o      o
+    /// o    o    o   
+    /// </summary>
+    /// <param name="row">Row.</param>
+    /// <param name="col">Col.</param>
+    /// <param name="type">Type.</param>
+    /// 2015-9-12 15:18:14 create function
+    void CheckAndAddVerticalMatchedGemstone(int row, int col, int type)
+    {
+        for(int tmp_col=col;col<=tmp_col+2;col++)
+        {
+            if (type == GetGemstoneType(row - 1, col) && type == GetGemstoneType(row - 2, col))
+            {
+                AddMatchedGemstoneToList(GetGemstone(row - 1, col));
+                AddMatchedGemstoneToList(GetGemstone(row - 2, col));
+            }
+
+            if (type == GetGemstoneType(row + 1, col) && type == GetGemstoneType(row + 2, col))
+            {
+                AddMatchedGemstoneToList(GetGemstone(row + 1, col));
+                AddMatchedGemstoneToList(GetGemstone(row + 2, col));
+            }
+
+            if (type == GetGemstoneType(row - 1, col) && type == GetGemstoneType(row + 1, col))
+            {
+                AddMatchedGemstoneToList(GetGemstone(row + 1, col));
+                AddMatchedGemstoneToList(GetGemstone(row + 2, col));
+            }
+        }
+    }
+    /// <summary>
+    /// Checks the and add leftside and rightside matched gemstone.
+    ///  2     2     2     1     1     1
+    ///ooooo   o     o    ooo    o     o
+    ///  o   ooooo   o     o    ooo    o  
+    ///  o     o   ooooo   o     o    ooo
+    /// </summary>
+    /// <param name="row">Row.</param>
+    /// <param name="col">Col.</param>
+    /// <param name="type">Type.</param>
+    /// 2015-9-12 15:53:04 create function
+    void CheckAndAddHorizontalMatchedGemstone(int row, int col, int type)
+    {
+        for(int tmp_col=col;col<=tmp_col+2;col++)
+        {
+            if (type == GetGemstoneType(row, col - 1) && type == GetGemstoneType(row, col- 2))
+            {
+                AddMatchedGemstoneToList(GetGemstone(row, col - 1));
+                AddMatchedGemstoneToList(GetGemstone(row, col - 2));
+            }
+
+            if (type == GetGemstoneType(row, col+ 1) && type == GetGemstoneType(row, col + 2))
+            {
+                AddMatchedGemstoneToList(GetGemstone(row, col + 1));
+                AddMatchedGemstoneToList(GetGemstone(row, col + 2));
+            }
+
+            if (type == GetGemstoneType(row, col - 1) && type == GetGemstoneType(row, col + 1))
+            {
+                AddMatchedGemstoneToList(GetGemstone(row, col + 1));
+                AddMatchedGemstoneToList(GetGemstone(row, col + 2));
+            }
+        }
     }
     /// <summary>
     /// Checks the left matchable gemstone.
